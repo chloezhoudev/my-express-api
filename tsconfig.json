@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "outDir": "dist",
+    "rootDir": "./src",
+    "lib": ["esnext"],
+    "esModuleInterop": true
+  }
+}
