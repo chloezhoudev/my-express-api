@@ -1,4 +1,6 @@
 import jwt from "jsonwebtoken";
+import { comparePassword, hashPassword } from "@/utils/auth";
+import prisma from "@/lib/prisma";
 
 interface JWTUser {
     id: string;
@@ -26,4 +28,43 @@ export const protect = (req: any, res: any, next: any) => {
         req.user = decoded;
         next();
     });
+}
+
+export const signup = async (req: any, res: any) => {
+    const { name, email, password } = req.body;
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (user) {
+        return res.status(400).json({ message: "User already exists" });
+    }
+
+    const hashedPassword = await hashPassword(password);
+
+    const newUser = await prisma.user.create({
+        data: {
+            name,
+            email,
+            password: hashedPassword,
+        },
+    });
+
+    const token = createJWT(newUser);
+    res.status(201).json({ token });
+}
+
+export const singin = async (req: any, res: any) => {
+    const { email, password } = req.body;
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+        return res.status(400).json({ message: "Invalid email or password" });
+    }
+
+    const isMatch = await comparePassword(password, user.password);
+    if (!isMatch) {
+        return res.status(400).json({ message: "Invalid email or password" });
+    }
+
+    const token = createJWT(user);
+    res.status(200).json({ token });
 }
