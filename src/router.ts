@@ -71,8 +71,32 @@ router.delete('/update/:id', () => {});
 // Update Points
 router.get('/updatepoint', () => {});
 router.get('/updatepoint/:id', () => {});
-router.put('/updatepoint/:id', () => {});
-router.post('/updatepoint', () => {});
+router.put('/updatepoint/:id', [
+  body("title")
+    .exists().withMessage("Title is required")
+    .isString().withMessage("Title must be a string")
+    .notEmpty().withMessage("Title cannot be empty"),
+  body("description")
+    .exists().withMessage("Body is required")
+    .isString().withMessage("Body must be a string")
+    .notEmpty().withMessage("Body cannot be empty"),
+  validate
+], (req, res) => {
+  res.send('Update point updated');
+});
+router.post('/updatepoint', [
+  body("title")
+    .exists().withMessage("Title is required")
+    .isString().withMessage("Title must be a string")
+    .notEmpty().withMessage("Title cannot be empty"),
+  body("description")
+    .exists().withMessage("Body is required")
+    .isString().withMessage("Body must be a string")
+    .notEmpty().withMessage("Body cannot be empty"),
+  validate
+], (req, res) => {
+  res.send('UpdatePoint created');
+});
 router.delete('/updatepoint/:id', () => {});
 
 export default router;
