@@ -1,33 +1,28 @@
 import { Router } from "express";
 import { body } from "express-validator";
 import { validate } from "./modules/middleware";
+import { createProduct, deleteProduct, getProductById, getProducts, updateProduct } from "./handlers/product";
 
 const router = Router();
 
 // Products
-router.get('/product', (req, res) => {
-  res.send('Product list');
-});
-router.get('/product/:id', () => {});
+router.get('/product', getProducts);
+router.get('/product/:id', getProductById);
 router.put('/product/:id', [
   body("name")
   .exists().withMessage("Name is required")
   .isString().withMessage("Name must be a string")
   .notEmpty().withMessage("Name cannot be empty"),
   validate
-], (req, res) => {
-  res.send('Product updated');
-});
+], updateProduct);
 router.post('/product', [
   body("name")
   .exists().withMessage("Name is required")
   .isString().withMessage("Name must be a string")
   .notEmpty().withMessage("Name cannot be empty"),
   validate
-], (req, res) => {
-  res.send('Product created');
-});
-router.delete('/product/:id', () => {});
+], createProduct);
+router.delete('/product/:id', deleteProduct);
 
 // Updates
 router.get('/update', () => {});
