@@ -2,6 +2,7 @@ import { Router } from "express";
 import { body } from "express-validator";
 import { validate } from "./modules/middleware";
 import { createProduct, deleteProduct, getProductById, getProducts, updateProduct } from "./handlers/product";
+import { createUpdate, deleteUpdate, getUpdateById, getUpdates, updateUpdate } from "./handlers/update";
 
 const router = Router();
 
@@ -25,8 +26,8 @@ router.post('/product', [
 router.delete('/product/:id', deleteProduct);
 
 // Updates
-router.get('/update', () => {});
-router.get('/update/:id', () => {});
+router.get('/update', getUpdates);
+router.get('/update/:id', getUpdateById);
 router.put('/update/:id', [
   body("title")
     .exists().withMessage("Title is required")
@@ -41,9 +42,7 @@ router.put('/update/:id', [
     .isIn(["IN_PROGRESS", "LIVE", "DEPRECATED", "ARCHIVED"])
     .withMessage("Status must be one of IN_PROGRESS, LIVE, DEPRECATED, or ARCHIVED"),
   validate
-], (req, res) => {
-  res.send('Update updated');
-});
+], updateUpdate);
 router.post('/update', [
   body("title")
     .exists().withMessage("Title is required")
@@ -53,15 +52,17 @@ router.post('/update', [
     .exists().withMessage("Body is required")
     .isString().withMessage("Body must be a string")
     .notEmpty().withMessage("Body cannot be empty"),
+    body("productId")
+    .exists().withMessage("Product ID is required")
+    .isString().withMessage("Product ID must be a string")
+    .notEmpty().withMessage("Product ID cannot be empty"),
   body("status")
     .optional()
     .isIn(["IN_PROGRESS", "LIVE", "DEPRECATED", "ARCHIVED"])
     .withMessage("Status must be one of IN_PROGRESS, LIVE, DEPRECATED, or ARCHIVED"),
   validate
-], (req, res) => {
-  res.send('Update created');
-});
-router.delete('/update/:id', () => {});
+], createUpdate);
+router.delete('/update/:id', deleteUpdate);
 
 // Update Points
 router.get('/updatepoint', () => {});
