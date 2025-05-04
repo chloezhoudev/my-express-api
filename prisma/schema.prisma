@@ -30,7 +30,7 @@ model Product {
 
   name     String
   userId   String
-  belongTo User     @relation(fields: [userId], references: [id])
+  belongTo User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   updates  Update[]
 }
 
@@ -53,7 +53,7 @@ model Update {
   asset   String?
 
   productId    String
-  belongTo     Product       @relation(fields: [productId], references: [id])
+  belongTo     Product       @relation(fields: [productId], references: [id], onDelete: Cascade)
   updatePoints UpdatePoint[]
 }
 
@@ -66,5 +66,5 @@ model UpdatePoint {
   description String
 
   updateId String
-  belongTo Update @relation(fields: [updateId], references: [id])
+  belongTo Update @relation(fields: [updateId], references: [id], onDelete: Cascade)
 }
