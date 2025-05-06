@@ -38,7 +38,7 @@ export const getUpdateById = async (req: any, res: any) => {
 
     const productIds = userProducts.map(product => product.id);
 
-    const update = prisma.update.findFirst({
+    const update = await prisma.update.findFirst({
       where: {
         id,
         productId: {
