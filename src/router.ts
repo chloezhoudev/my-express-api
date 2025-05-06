@@ -3,6 +3,7 @@ import { body } from "express-validator";
 import { validate } from "./modules/middleware";
 import { createProduct, deleteProduct, getProductById, getProducts, updateProduct } from "./handlers/product";
 import { createUpdate, deleteUpdate, getUpdateById, getUpdates, updateUpdate } from "./handlers/update";
+import { createUpdatePoint, deleteUpdatePoint, getUpdatePointById, getUpdatePoints, updateUpdatePoint } from "./handlers/updatepoint";
 
 const router = Router();
 
@@ -65,34 +66,34 @@ router.post('/update', [
 router.delete('/update/:id', deleteUpdate);
 
 // Update Points
-router.get('/updatepoint', () => {});
-router.get('/updatepoint/:id', () => {});
+router.get('/updatepoint', getUpdatePoints);
+router.get('/updatepoint/:id', getUpdatePointById);
 router.put('/updatepoint/:id', [
-  body("title")
-    .exists().withMessage("Title is required")
-    .isString().withMessage("Title must be a string")
-    .notEmpty().withMessage("Title cannot be empty"),
+  body("name")
+    .exists().withMessage("Name is required")
+    .isString().withMessage("Name must be a string")
+    .notEmpty().withMessage("Name cannot be empty"),
   body("description")
-    .exists().withMessage("Body is required")
-    .isString().withMessage("Body must be a string")
-    .notEmpty().withMessage("Body cannot be empty"),
+    .exists().withMessage("Description is required")
+    .isString().withMessage("Description must be a string")
+    .notEmpty().withMessage("Description cannot be empty"),
   validate
-], (req, res) => {
-  res.send('Update point updated');
-});
+], updateUpdatePoint);
 router.post('/updatepoint', [
-  body("title")
-    .exists().withMessage("Title is required")
-    .isString().withMessage("Title must be a string")
-    .notEmpty().withMessage("Title cannot be empty"),
+  body("name")
+    .exists().withMessage("Name is required")
+    .isString().withMessage("Name must be a string")
+    .notEmpty().withMessage("Name cannot be empty"),
   body("description")
-    .exists().withMessage("Body is required")
-    .isString().withMessage("Body must be a string")
-    .notEmpty().withMessage("Body cannot be empty"),
+    .exists().withMessage("Description is required")
+    .isString().withMessage("Description must be a string")
+    .notEmpty().withMessage("Description cannot be empty"),
+  body("updateId")
+    .exists().withMessage("Update ID is required")
+    .isString().withMessage("Update ID must be a string")
+    .notEmpty().withMessage("Update ID cannot be empty"),
   validate
-], (req, res) => {
-  res.send('UpdatePoint created');
-});
-router.delete('/updatepoint/:id', () => {});
+], createUpdatePoint);
+router.delete('/updatepoint/:id', deleteUpdatePoint);
 
 export default router;
