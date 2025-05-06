@@ -4,20 +4,20 @@ export const getUpdates = async (req: any, res: any) => {
   try {
     const userId = req.user?.id;
 
-    const userProducts = await prisma.product.findMany({
-      where: { userId },
-      select: { id: true },
-    });
-
-    const productIds = userProducts.map(product => product.id);
-
     const updates = await prisma.update.findMany({
       where: {
-        productId: {
-          in: productIds
+        belongTo: {
+          userId
         }
       },
-      include: { updatePoints: true }
+      include: {
+        updatePoints: true,
+        belongTo: {
+          select: {
+            name: true
+          }
+        }
+      }
     });
 
     res.status(200).json(updates);
