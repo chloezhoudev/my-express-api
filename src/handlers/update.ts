@@ -48,7 +48,7 @@ export const getUpdateById = async (req: any, res: any) => {
     });
 
     if (!update) {
-      res.status(404).json({ error: "Update not found" });
+      return res.status(404).json({ error: "Update not found" });
     }
     res.status(200).json(update);
   } catch (error) {
