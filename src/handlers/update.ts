@@ -31,18 +31,19 @@ export const getUpdateById = async (req: any, res: any) => {
     const userId = req.user?.id;
     const { id } = req.params;
 
-    const userProducts = await prisma.product.findMany({
-      where: { userId },
-      select: { id: true },
-    });
-
-    const productIds = userProducts.map(product => product.id);
-
     const update = await prisma.update.findFirst({
       where: {
         id,
-        productId: {
-          in: productIds
+        belongTo: {
+          userId
+        }
+      },
+      include: {
+        updatePoints: true,
+        belongTo: {
+          select: {
+            name: true
+          }
         }
       }
     });
@@ -82,6 +83,14 @@ export const createUpdate = async (req: any, res: any) => {
         ...(version && { version }),
         ...(asset && { asset }),
       },
+      include: {
+        updatePoints: true,
+        belongTo: {
+          select: {
+            name: true
+          }
+        }
+      }
     });
     res.status(201).json(update);
   } catch (error) {
@@ -96,29 +105,20 @@ export const updateUpdate = async (req: any, res: any) => {
     const userId = req.user?.id;
     const { title, body, status, version, asset } = req.body;
 
-    const userProducts = await prisma.product.findMany({
-      where: {
-        userId
-      },
-      select: { id: true }
-    });
-
-    const productIds = userProducts.map(product => product.id);
-
-    const update = await prisma.update.findFirst({
+    const existingUpdate = await prisma.update.findFirst({
       where: {
         id,
-        productId: {
-          in: productIds
+        belongTo: {
+          userId
         }
       }
     });
 
-    if (!update) {
+    if (!existingUpdate) {
       return res.status(404).json({ error: "Update not found" });
     }
 
-    const updated = await prisma.update.update({
+    const update = await prisma.update.update({
       where: { id },
       data: {
         title,
@@ -127,10 +127,18 @@ export const updateUpdate = async (req: any, res: any) => {
         ...(status && { status }),
         ...(version && { version }),
         ...(asset && { asset }),
+      },
+      include: {
+        updatePoints: true,
+        belongTo: {
+          select: {
+            name: true
+          }
+        }
       }
     });
 
-    res.status(200).json(updated);
+    res.status(200).json(update);
   } catch (error) {
     console.error('Error updating update:', error);
     res.status(500).json({ error: "Unable to update update" });
@@ -142,20 +150,11 @@ export const deleteUpdate = async (req: any, res: any) => {
     const { id } = req.params;
     const userId = req.user?.id;
 
-    const userProducts = await prisma.product.findMany({
-      where: {
-        userId
-      },
-      select: { id: true }
-    });
-
-    const productIds = userProducts.map(product => product.id);
-
     const update = await prisma.update.findFirst({
       where: {
         id,
-        productId: {
-          in: productIds
+        belongTo: {
+          userId
         }
       }
     });
