@@ -1,6 +1,7 @@
 import prisma from "@/lib/prisma";
+import { createError } from "@/modules/middleware";
 
-export const getUpdates = async (req: any, res: any) => {
+export const getUpdates = async (req: any, res: any, next: any) => {
   try {
     const userId = req.user?.id;
 
@@ -22,11 +23,11 @@ export const getUpdates = async (req: any, res: any) => {
 
     res.status(200).json(updates);
   } catch (error) {
-    res.status(500).json({ error: "Unable to retrieve updates" });
+    next(createError("Unable to retrieve updates"));
   }
 };
 
-export const getUpdateById = async (req: any, res: any) => {
+export const getUpdateById = async (req: any, res: any, next: any) => {
   try {
     const userId = req.user?.id;
     const { id } = req.params;
@@ -49,15 +50,15 @@ export const getUpdateById = async (req: any, res: any) => {
     });
 
     if (!update) {
-      return res.status(404).json({ error: "Update not found" });
+      return next(createError("Update not found", "input"));
     }
     res.status(200).json(update);
   } catch (error) {
-    res.status(500).json({ error: "Unable to retrieve update" });
+    next(createError("Unable to retrieve update"));
   }
 };
 
-export const createUpdate = async (req: any, res: any) => {
+export const createUpdate = async (req: any, res: any, next: any) => {
   try {
     const userId = req.user?.id;
     const { title, body, productId, status, version, asset } = req.body;
@@ -70,7 +71,7 @@ export const createUpdate = async (req: any, res: any) => {
     });
 
     if (!product) {
-      return res.status(404).json({ error: "Product not found" });
+      return next(createError("Product not found", "input"));
     }
 
     const update = await prisma.update.create({
@@ -94,12 +95,11 @@ export const createUpdate = async (req: any, res: any) => {
     });
     res.status(201).json(update);
   } catch (error) {
-    console.error('Error creating update:', error);
-    res.status(500).json({ error: "Unable to create update" });
+    next(createError("Unable to create update"));
   }
 };
 
-export const updateUpdate = async (req: any, res: any) => {
+export const updateUpdate = async (req: any, res: any, next: any) => {
   try {
     const { id } = req.params;
     const userId = req.user?.id;
@@ -115,7 +115,7 @@ export const updateUpdate = async (req: any, res: any) => {
     });
 
     if (!existingUpdate) {
-      return res.status(404).json({ error: "Update not found" });
+      return next(createError("Update not found", "input"));
     }
 
     const update = await prisma.update.update({
@@ -140,12 +140,11 @@ export const updateUpdate = async (req: any, res: any) => {
 
     res.status(200).json(update);
   } catch (error) {
-    console.error('Error updating update:', error);
-    res.status(500).json({ error: "Unable to update update" });
+    next(createError("Unable to update update"));
   }
 };
 
-export const deleteUpdate = async (req: any, res: any) => {
+export const deleteUpdate = async (req: any, res: any, next: any) => {
   try {
     const { id } = req.params;
     const userId = req.user?.id;
@@ -160,7 +159,7 @@ export const deleteUpdate = async (req: any, res: any) => {
     });
 
     if (!update) {
-      return res.status(404).json({ error: "Update not found" });
+      return next(createError("Update not found", "input"));
     }
 
     await prisma.update.delete({
@@ -169,7 +168,6 @@ export const deleteUpdate = async (req: any, res: any) => {
 
     res.status(204).send();
   } catch (error) {
-    console.error('Error deleting update:', error);
-    res.status(500).json({ error: "Unable to delete update" });
+    next(createError("Unable to delete update"));
   }
 };
