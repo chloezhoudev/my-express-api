@@ -1,7 +1,8 @@
 import prisma from "@/lib/prisma";
+import { createError } from "@/modules/middleware";
 
 
-export const getUpdatePoints = async (req: any, res: any) => {
+export const getUpdatePoints = async (req: any, res: any, next: any) => {
   try {
     const userId = req.user?.id;
 
@@ -29,12 +30,11 @@ export const getUpdatePoints = async (req: any, res: any) => {
 
     res.status(200).json(updatePoints);
   } catch (error) {
-    console.error('Error getting update points:', error);
-    res.status(500).json({ error: "Unable to retrieve update points" });
+    next(createError("Unable to retrieve update points"));
   }
 };
 
-export const getUpdatePointById = async (req: any, res: any) => {
+export const getUpdatePointById = async (req: any, res: any, next: any) => {
   try {
     const userId = req.user?.id;
     const { id } = req.params;
@@ -63,16 +63,15 @@ export const getUpdatePointById = async (req: any, res: any) => {
     });
 
     if (!updatePoint) {
-      return res.status(404).json({ error: "Update point not found" });
+      return next(createError("Update point not found", "input"));
     }
     res.status(200).json(updatePoint);
   } catch (error) {
-    console.error('Error getting update point:', error);
-    res.status(500).json({ error: "Unable to retrieve update point" });
+    next(createError("Unable to retrieve update point"));
   }
 };
 
-export const createUpdatePoint = async (req: any, res: any) => {
+export const createUpdatePoint = async (req: any, res: any, next: any) => {
   try {
     const userId = req.user?.id;
     const { name, description, updateId } = req.body;
@@ -87,7 +86,7 @@ export const createUpdatePoint = async (req: any, res: any) => {
     });
 
     if (!update) {
-      return res.status(404).json({ error: "Update not found" });
+      return next(createError("Update not found", "input"));
     }
 
     const updatePoint = await prisma.updatePoint.create({
@@ -113,12 +112,11 @@ export const createUpdatePoint = async (req: any, res: any) => {
 
     res.status(201).json(updatePoint);
   } catch (error) {
-    console.error('Error creating update point:', error);
-    res.status(500).json({ error: "Unable to create update point" });
+    next(createError("Unable to create update point"));
   }
 };
 
-export const updateUpdatePoint = async (req: any, res: any) => {
+export const updateUpdatePoint = async (req: any, res: any, next: any) => {
   try {
     const userId = req.user?.id;
     const { id } = req.params;
@@ -136,7 +134,7 @@ export const updateUpdatePoint = async (req: any, res: any) => {
     });
 
     if (!existingUpdatePoint) {
-      return res.status(404).json({ error: "Update point not found" });
+      return next(createError("Update point not found", "input"));
     }
 
     const updatePoint = await prisma.updatePoint.update({
@@ -162,12 +160,11 @@ export const updateUpdatePoint = async (req: any, res: any) => {
 
     res.status(200).json(updatePoint);
   } catch (error) {
-    console.error('Error updating update point:', error);
-    res.status(500).json({ error: "Unable to update update point" });
+    next(createError("Unable to update update point"));
   }
 };
 
-export const deleteUpdatePoint = async (req: any, res: any) => {
+export const deleteUpdatePoint = async (req: any, res: any, next: any) => {
   try {
     const { id } = req.params;
     const userId = req.user?.id;
@@ -184,7 +181,7 @@ export const deleteUpdatePoint = async (req: any, res: any) => {
     });
 
     if (!updatePoint) {
-      return res.status(404).json({ error: "Update point not found" });
+      return next(createError("Update point not found", "input"));
     }
 
     await prisma.updatePoint.delete({
@@ -193,7 +190,6 @@ export const deleteUpdatePoint = async (req: any, res: any) => {
 
     res.status(204).send();
   } catch (error) {
-    console.error('Error deleting update point:', error);
-    res.status(500).json({ error: "Unable to delete update point" });
+    next(createError("Unable to delete update point"));
   }
 };
