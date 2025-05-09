@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import { createError } from "@/modules/middleware";
 
-export const getProducts = async (req: any, res: any) => {
+export const getProducts = async (req: any, res: any, next: any) => {
   try {
     const userId = req.user?.id;
     const products = await prisma.product.findMany({
@@ -11,29 +11,33 @@ export const getProducts = async (req: any, res: any) => {
 
     res.status(200).json(products);
   } catch (error) {
-    res.status(500).json({ error: "Unable to retrieve products" });
+    next(createError("Unable to retrieve products"));
   }
 };
 
-export const getProductById = async (req: any, res: any) => {
-  const { id } = req.params;
-  const userId = req.user?.id;
-  const product = await prisma.product.findFirst({
-    where: {
-      id,
-      userId,
-    },
-    include: { updates: true },
-  });
+export const getProductById = async (req: any, res: any, next: any) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user?.id;
+    const product = await prisma.product.findFirst({
+      where: {
+        id,
+        userId,
+      },
+      include: { updates: true },
+    });
 
-  if (!product) {
-    throw createError('Product not found', 'input');
+    if (!product) {
+      return next(createError('Product not found', 'input'));
+    }
+
+    res.status(200).json(product);
+  } catch (error) {
+    next(createError("Unable to retrieve product"));
   }
-
-  res.status(200).json(product);
 };
 
-export const createProduct = async (req: any, res: any) => {
+export const createProduct = async (req: any, res: any, next: any) => {
   try {
     const { name } = req.body;
     const userId = req.user?.id;
@@ -47,11 +51,11 @@ export const createProduct = async (req: any, res: any) => {
 
     res.status(201).json(product);
   } catch (error) {
-    res.status(500).json({ error: "Unable to create product" });
+    next(createError("Unable to create product"));
   }
 };
 
-export const updateProduct = async (req: any, res: any) => {
+export const updateProduct = async (req: any, res: any, next: any) => {
   try {
     const { id } = req.params;
     const { name } = req.body;
@@ -62,7 +66,7 @@ export const updateProduct = async (req: any, res: any) => {
     });
 
     if (!existingProduct) {
-      return res.status(400).json({ error: "Product not found" });
+      return next(createError("Product not found", "input"));
     }
 
     const product = await prisma.product.update({
@@ -72,11 +76,11 @@ export const updateProduct = async (req: any, res: any) => {
 
     res.status(200).json(product);
   } catch (error) {
-    res.status(500).json({ error: "Unable to update product" });
+    next(createError("Unable to update product"));
   }
 };
 
-export const deleteProduct = async (req: any, res: any) => {
+export const deleteProduct = async (req: any, res: any, next: any) => {
   try {
     const { id } = req.params;
     const userId = req.user?.id;
@@ -86,12 +90,12 @@ export const deleteProduct = async (req: any, res: any) => {
     });
 
     if (!existingProduct) {
-      return res.status(404).json({ error: "Product not found" });
+      return next(createError("Product not found", "input"));
     }
 
     await prisma.product.delete({ where: { id } });
     res.status(204).send();
   } catch (error) {
-    res.status(500).json({ error: "Unable to delete product" });
+    next(createError("Unable to delete product"));
   }
 };
