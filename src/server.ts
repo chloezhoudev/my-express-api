@@ -3,7 +3,7 @@ import morgan from 'morgan';
 import router from './router';
 import { protect, signup, singin } from './modules/auth';
 import { body } from 'express-validator';
-import { validate } from './modules/middleware';
+import { validate, errorHandler } from './modules/middleware';
 
 const app = express();
 
@@ -27,5 +27,7 @@ app.post('/signin', [
   validate
 ], singin);
 app.use('/api', protect, router);
+
+app.use(errorHandler);
 
 export default app;

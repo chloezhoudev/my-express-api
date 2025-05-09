@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { createError } from "@/modules/middleware";
 
 export const getProducts = async (req: any, res: any) => {
   try {
@@ -15,24 +16,21 @@ export const getProducts = async (req: any, res: any) => {
 };
 
 export const getProductById = async (req: any, res: any) => {
-  try {
-    const { id } = req.params;
-    const userId = req.user?.id;
-    const product = await prisma.product.findFirst({
-      where: {
-        id,
-        userId,
-      },
-      include: { updates: true },
-    });
+  const { id } = req.params;
+  const userId = req.user?.id;
+  const product = await prisma.product.findFirst({
+    where: {
+      id,
+      userId,
+    },
+    include: { updates: true },
+  });
 
-    if (!product) {
-      return res.status(404).json({ error: "Product not found" });
-    }
-    res.status(200).json(product);
-  } catch (error) {
-    res.status(500).json({ error: "Unable to retrieve product" });
+  if (!product) {
+    throw createError('Product not found', 'input');
   }
+
+  res.status(200).json(product);
 };
 
 export const createProduct = async (req: any, res: any) => {
