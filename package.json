@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec ts-node -r tsconfig-paths/register src/index.ts"
+    "dev": "cross-env STAGE=local nodemon --exec ts-node -r tsconfig-paths/register src/index.ts",
+    "staging": "cross-env STAGE=staging dotenv -e .env.staging ts-node -r tsconfig-paths/register src/index.ts",
+    "start": "cross-env STAGE=production dotenv -e .env.production node -r tsconfig-paths/register dist/index.js"
   },
   "keywords": [],
   "author": "",
@@ -17,12 +19,15 @@
     "express": "^5.1.0",
     "express-validator": "^7.2.1",
     "jsonwebtoken": "^9.0.2",
+    "lodash.merge": "^4.6.2",
     "morgan": "^1.10.0",
     "tsconfig-paths": "^4.2.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.1",
+    "@types/lodash.merge": "^4.6.9",
     "@types/node": "^22.14.1",
+    "cross-env": "^7.0.3",
     "nodemon": "^3.1.9",
     "prisma": "^6.6.0",
     "ts-node": "^10.9.2",
