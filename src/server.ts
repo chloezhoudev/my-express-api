@@ -4,12 +4,15 @@ import router from './router';
 import { protect, signup, singin } from './modules/auth';
 import { body } from 'express-validator';
 import { validate, errorHandler } from './modules/middleware';
+import config from './config';
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(morgan('dev'));
+if (config.logging) {
+  app.use(morgan('dev'));
+}
 
 app.get('/', (req, res) => {
   res.send('Hello, World!');
