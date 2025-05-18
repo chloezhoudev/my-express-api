@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
-import { comparePassword, hashPassword } from "@/utils/auth";
-import prisma from "@/lib/prisma";
+import { comparePassword, hashPassword } from "../utils/auth";
+import prisma from "../lib/prisma";
 import { createError } from "./middleware";
 
 interface JWTUser {

@@ -1,5 +1,5 @@
-import prisma from "@/lib/prisma";
-import { createError } from "@/modules/middleware";
+import prisma from "../lib/prisma";
+import { createError } from "../modules/middleware";
 
 export const getProducts = async (req: any, res: any, next: any) => {
   try {
