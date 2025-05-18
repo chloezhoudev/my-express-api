@@ -7,6 +7,8 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: STAGE
+        value: production
       - key: DATABASE_URL
         sync: false  # Means this value will be set manually in Render dashboard
       - key: JWT_SECRET
