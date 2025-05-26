@@ -3,7 +3,6 @@
     "outDir": "dist",
     "rootDir": "./src",
     "lib": ["esnext"],
-    "types": ["node"],
     "esModuleInterop": true
   }
 }
